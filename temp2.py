@@ -140,6 +140,6 @@ def driver_code():
 
 if __name__ == "__main__":
     scheduler = BlockingScheduler()
-    scheduler.add_job(driver_code, 'interval', minutes=3)
+    scheduler.add_job(driver_code, 'interval', minutes=2)
     scheduler.start()
 
