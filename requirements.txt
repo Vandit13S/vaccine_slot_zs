@@ -6,4 +6,4 @@ Werkzeug==0.16.0
 APScheduler==3.7.0
 beautifulsoup4==4.8.0
 yagmail==0.14.248
-gunicorn
+gunicorn==20.1.0
