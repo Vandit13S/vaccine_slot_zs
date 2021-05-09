@@ -1,0 +1,13 @@
+<html>
+    <body>
+
+        {% for task in tasks %}
+        <p>{{ task.srno }}</p>
+        <p>{{ task.n }}</p>
+        <p>{{ task.email }}</p>
+        <p>{{ task.dt }}</p>
+
+        {% endfor %}
+        <p><a href="/">Click here to add another response</a>
+    </body>
+</html>

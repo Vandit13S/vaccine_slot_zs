@@ -1,0 +1,21 @@
+<html>
+    <body>
+    {errors}
+    <p>Enter your details:</p>
+    <form method="post" action=".">
+        <p>Pincode:<input name="n" id="n" placeholder="Number only"/></p>
+        <p>Email:<input name="email" id="email" /></p>
+        <!--<p>Date:<input name="dt" id="dt" /></p>-->
+        <p><input type="submit" value="Submit"/></p>
+        <br>
+        <br>
+        <!--{% for task in tasks %}
+        <p>{{ task.srno }}</p>
+        <p>{{ task.n }}</p>
+        <p>{{ task.email }}</p>
+        <p>{{ task.dt }}</p>
+        {% endfor %} -->
+        <p><a href="/delete">Delete</a>
+    </form>
+    </body>
+</html>
