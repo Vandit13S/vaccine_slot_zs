@@ -10,8 +10,10 @@ from bs4 import BeautifulSoup
 import time
 from webdriver_manager.chrome import ChromeDriverManager
 from apscheduler.schedulers.blocking import BlockingScheduler
+import yagmail
 global driver
 
+yag_smtp_connection = yagmail.SMTP( user="freebikeduke@gmail.com", password="India*132", host='smtp.gmail.com')
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test2.db'
@@ -19,10 +21,14 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
 class userlist(db.Model):
-    srno = db.Column(db.Integer,primary_key=True)
-    n = db.Column(db.Integer,nullable=False)
-    email = db.Column(db.String(50),nullable=False)
-    dt = db.Column(db.String(10), nullable=False)
+    srno = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    n = db.Column(db.Integer, nullable=False)
+    email = db.Column(db.String(50), nullable=False)
+    filler1 = db.Column(db.String(500), nullable=True)
+    filler2 = db.Column(db.String(500), nullable=True)
+    filler3 = db.Column(db.String(500), nullable=True)
+    filler4 = db.Column(db.String(500), nullable=True)
+    filler5 = db.Column(db.String(500), nullable=True)
 
     def __repr__(self):
         return '<Pincode %r email %s>' % (self.n,self.email)
@@ -99,27 +105,42 @@ def get_details(n):
         res = "Vaccine is not available at any centre"
         return res
 
-def write_data(res, n):
+'''def write_data(res, n):
     now = datetime.now()
     f_dt=str(now.strftime("%Y%m%d_%H%M%S"))
     f_nm = str(n) + '_' + f_dt
     with open('{0}.txt'.format(f_nm), 'a') as f:
-        f.write(res)
+        f.write(res)'''
+
+def get_email(n):
+    pincode_to_check = userlist.query.filter_by(n=n).all()
+    email_str = ""
+    for i in pincode_to_check:
+        email_str += str(i.email) + ","
+    email_list = list(email_str.split(","))
+    email_list.pop()
+    email_list = list(set(email_list))
+    return email_list
+
+def send_mail(lst,sub,body):
+    if body != "Vaccine is not available at any centre":
+        yag_smtp_connection.send(lst, sub, body)
 
 def driver_code():
     global driver
     pincode_to_check = userlist.query.all()
     driver = webdriver.Chrome(ChromeDriverManager().install())
-
+    pin = set()
     for i in pincode_to_check:
-        print(i.n)
-        write_data(get_details(i.n), i.n)
+        pin.add(i.n)
+        #write_data(get_details(i.n), i.n)
+    for i in pin:
+        send_mail(get_email(i),"Vaccine Notifier {0}".format(i),get_details(i))
 
     driver.close()
 
 if __name__ == "__main__":
     scheduler = BlockingScheduler()
-    scheduler.add_job(driver_code, 'interval', minutes=1)
+    scheduler.add_job(driver_code, 'interval', minutes=3)
     scheduler.start()
-
 
